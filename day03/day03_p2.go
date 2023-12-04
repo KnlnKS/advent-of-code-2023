@@ -11,16 +11,6 @@ type Coordinate struct {
 	j int
 }
 
-// See if the gear location already exists in the map
-func find(gearLocations []Coordinate, gear Coordinate) bool {
-	for _, gearLocation := range gearLocations {
-		if gearLocation == gear {
-			return true
-		}
-	}
-	return false
-}
-
 func main() {
 	// Open the input file
 	file, err := os.Open("./input.txt")
@@ -58,44 +48,21 @@ func main() {
 			case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
 				bufferNum = (bufferNum * 10) + int(schematic[i][j]-'0')
 
-				if i > 0 && schematic[i-1][j] == '*' {
-					if !find(gearLocations, Coordinate{i - 1, j}) {
-						gearLocations = append(gearLocations, Coordinate{i - 1, j})
-					}
-				}
-				if i > 0 && j > 0 && schematic[i-1][j-1] == '*' {
-					if !find(gearLocations, Coordinate{i - 1, j - 1}) {
-						gearLocations = append(gearLocations, Coordinate{i - 1, j - 1})
-					}
-				}
-				if j > 0 && schematic[i][j-1] == '*' {
-					if !find(gearLocations, Coordinate{i, j - 1}) {
-						gearLocations = append(gearLocations, Coordinate{i, j - 1})
-					}
-				}
-				if i > 0 && j != len(schematic[i])-1 && schematic[i-1][j+1] == '*' {
-					if !find(gearLocations, Coordinate{i - 1, j + 1}) {
-						gearLocations = append(gearLocations, Coordinate{i - 1, j + 1})
-					}
-				}
-				if i < len(schematic)-1 && schematic[i+1][j] == '*' {
-					if !find(gearLocations, Coordinate{i + 1, j}) {
-						gearLocations = append(gearLocations, Coordinate{i + 1, j})
-					}
-				}
-				if i < len(schematic)-1 && j > 0 && schematic[i+1][j-1] == '*' {
-					if !find(gearLocations, Coordinate{i + 1, j - 1}) {
-						gearLocations = append(gearLocations, Coordinate{i + 1, j - 1})
-					}
-				}
-				if i < len(schematic)-1 && j != len(schematic[i])-1 && schematic[i+1][j+1] == '*' {
-					if !find(gearLocations, Coordinate{i + 1, j + 1}) {
-						gearLocations = append(gearLocations, Coordinate{i + 1, j + 1})
-					}
-				}
-				if j < len(schematic[i])-1 && schematic[i][j+1] == '*' {
-					if !find(gearLocations, Coordinate{i, j + 1}) {
-						gearLocations = append(gearLocations, Coordinate{i, j + 1})
+			CheckAdjacent:
+				for k := -1; k <= 1; k++ {
+					for l := -1; l <= 1; l++ {
+						if i+k >= 0 && i+k < len(schematic) && j+l >= 0 && j+l < len(schematic[i]) {
+							if schematic[i+k][j+l] == '*' {
+								gear := Coordinate{i + k, j + l}
+								for m := range gearLocations {
+									if gearLocations[m] == gear {
+										break CheckAdjacent
+									}
+								}
+								gearLocations = append(gearLocations, gear)
+								break CheckAdjacent
+							}
+						}
 					}
 				}
 

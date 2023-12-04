@@ -44,22 +44,16 @@ func main() {
 			case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
 				bufferNum = (bufferNum * 10) + int(schematic[i][j]-'0')
 				if !isBufferNumValid {
-					if i > 0 && schematic[i-1][j] != '.' && schematic[i-1][j] != '\n' && (schematic[i-1][j] < '0' || schematic[i-1][j] > '9') {
-						isBufferNumValid = true
-					} else if i > 0 && j > 0 && schematic[i-1][j-1] != '.' && schematic[i-1][j-1] != '\n' && (schematic[i-1][j-1] < '0' || schematic[i-1][j-1] > '9') {
-						isBufferNumValid = true
-					} else if j > 0 && schematic[i][j-1] != '.' && schematic[i][j-1] != '\n' && (schematic[i][j-1] < '0' || schematic[i][j-1] > '9') {
-						isBufferNumValid = true
-					} else if i > 0 && j != len(schematic[i])-1 && schematic[i-1][j+1] != '.' && schematic[i-1][j+1] != '\n' && (schematic[i-1][j+1] < '0' || schematic[i-1][j+1] > '9') {
-						isBufferNumValid = true
-					} else if i < len(schematic)-1 && schematic[i+1][j] != '.' && schematic[i+1][j] != '\n' && (schematic[i+1][j] < '0' || schematic[i+1][j] > '9') {
-						isBufferNumValid = true
-					} else if i < len(schematic)-1 && j > 0 && schematic[i+1][j-1] != '.' && schematic[i+1][j-1] != '\n' && (schematic[i+1][j-1] < '0' || schematic[i+1][j-1] > '9') {
-						isBufferNumValid = true
-					} else if i < len(schematic)-1 && j != len(schematic[i])-1 && schematic[i+1][j+1] != '.' && schematic[i+1][j+1] != '\n' && (schematic[i+1][j+1] < '0' || schematic[i+1][j+1] > '9') {
-						isBufferNumValid = true
-					} else if j < len(schematic[i])-1 && schematic[i][j+1] != '.' && schematic[i][j+1] != '\n' && (schematic[i][j+1] < '0' || schematic[i][j+1] > '9') {
-						isBufferNumValid = true
+				CheckAdjacent:
+					for k := -1; k <= 1; k++ {
+						for l := -1; l <= 1; l++ {
+							if i+k >= 0 && i+k < len(schematic) && j+l >= 0 && j+l < len(schematic[i]) {
+								if schematic[i+k][j+l] != '.' && schematic[i+k][j+l] != '\n' && (schematic[i+k][j+l] < '0' || schematic[i+k][j+l] > '9') {
+									isBufferNumValid = true
+									break CheckAdjacent
+								}
+							}
+						}
 					}
 				}
 			default:
